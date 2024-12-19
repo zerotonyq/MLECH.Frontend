@@ -1,2 +1,2 @@
-# MLECH.Frontend
-Frontend REACT repository
+## Запуск
+npm install && npm start
