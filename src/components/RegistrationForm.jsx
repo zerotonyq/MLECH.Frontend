@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import DriverManagement from "./DriverManagement";
 import axios from "../api/api";
+import "../styles.css";
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -8,18 +10,28 @@ const RegistrationForm = () => {
     email: "",
     password_hash: "",
     role: "admin",
-    additionalData: {}, // This will hold additional fields for 'driver' and 'mechanic'
+    additionalData: {
+      age: 0,
+      sex: "male",
+      driver_rating: 0,
+      driver_rides: 0,
+      driver_time_accidents: 0,
+      first_ride_date: "",
+      mechanic_rating: 0,
+      car_times_repaired: 0,
+    },
   });
 
   const [registrationType, setRegistrationType] = useState("admin");
   const [responseMessage, setResponseMessage] = useState("");
 
-  // Login state
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentView, setCurrentView] = useState("registration");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +43,6 @@ const RegistrationForm = () => {
     setLoginData({ ...loginData, [name]: value });
   };
 
-  // New function to handle changes in additional fields (for 'driver' or 'mechanic')
   const handleAdditionalChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -40,13 +51,37 @@ const RegistrationForm = () => {
     });
   };
 
-  const handleRegistration = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      let endpoint = `/access/registration/${registrationType}`;
-      let payload = {};
+      const endpoint = "/access/login";
+      const payload = {
+        email: loginData.email,
+        password: loginData.password,
+      };
 
-      // For 'admin' registration
+      const response = await axios.post(endpoint, payload);
+      setIsLoggedIn(true);
+      setResponseMessage(`Welcome, ${loginData.email}!`);
+    } catch (error) {
+      setResponseMessage(`Login failed: ${error.response?.data?.detail || "An error occurred"}`);
+    }
+  };
+
+  const handleRegistration = async (e) => {
+    e.preventDefault();
+    // Client-side validation
+    if (!formData.firstname || !formData.lastname || !formData.email || !formData.password_hash) {
+      return setResponseMessage("All fields are required!");
+    }
+    if (registrationType !== "admin" && !formData.additionalData.age) {
+      return setResponseMessage("Age is required for drivers and mechanics!");
+    }
+  
+    try {
+      const endpoint = `/access/registration/${registrationType}`;
+      let payload = {};
+  
       if (registrationType === "admin") {
         payload = {
           firstname: formData.firstname,
@@ -56,7 +91,6 @@ const RegistrationForm = () => {
           role: "admin",
         };
       } else {
-        // For 'driver' or 'mechanic', include additional data
         payload = {
           user_data: {
             firstname: formData.firstname,
@@ -66,279 +100,278 @@ const RegistrationForm = () => {
             role: registrationType,
           },
           [`${registrationType}_data`]: {
-            ...formData.additionalData, // Spread all additional data
+            ...(registrationType === "driver"
+              ? {
+                  age: formData.additionalData.age,
+                  sex: formData.additionalData.sex,
+                  driver_rating: formData.additionalData.driver_rating,
+                  driver_rides: formData.additionalData.driver_rides,
+                  driver_time_accidents: formData.additionalData.driver_time_accidents,
+                  first_ride_date: formData.additionalData.first_ride_date,
+                }
+              : {
+                  age: formData.additionalData.age,
+                  sex: formData.additionalData.sex,
+                  mechanic_rating: formData.additionalData.mechanic_rating,
+                  car_times_repaired: formData.additionalData.car_times_repaired,
+                }),
           },
         };
       }
-
-      console.log("Sending POST request to:", endpoint);
-      console.log("Request payload:", JSON.stringify(payload, null, 2));
-
+  
       const response = await axios.post(endpoint, payload);
-
-      console.log("Response received:", response.data);
-
       setResponseMessage(`Success: ${response.data}`);
     } catch (error) {
-      console.error("Error in request:", error);
-      setResponseMessage(
-        `Error: ${error.response?.data?.detail || "An error occurred"}`
-      );
+      if (error.response?.status === 409) {
+        // Conflict error (e.g., user already exists)
+        setResponseMessage(`Error: User already exists.`);
+      } else {
+        setResponseMessage(
+          `Error: ${error.response?.data?.detail || error.message || "An unknown error occurred"}`
+        );
+      }
     }
   };
+  
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const endpoint = "/access/login";
-      const payload = {
-        email: loginData.email,
-        password: loginData.password,  // Use 'password' instead of 'password_hash'
-      };
-  
-      console.log("Sending POST request to:", endpoint);
-      console.log("Request payload:", JSON.stringify(payload, null, 2));
-  
-      const response = await axios.post(endpoint, payload);
-  
-      console.log("Login response received:", response.data);
-  
-      // Set logged-in state
-      setIsLoggedIn(true);
-      setResponseMessage(`Welcome, ${loginData.email}!`);
-    } catch (error) {
-      console.error("Error during login:", error);
-      setResponseMessage(
-        `Login failed: ${error.response?.data?.detail || "An error occurred"}`
-      );
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      const endpoint = "/access/logout";
-      const response = await axios.post(endpoint);
-
-      console.log("Logout response received:", response.data);
-      setIsLoggedIn(false);
-      setResponseMessage("Logged out successfully.");
-    } catch (error) {
-      console.error("Error during logout:", error);
-      setResponseMessage("Error during logout.");
-    }
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentView("registration");
+    setResponseMessage("Logged out successfully.");
   };
 
   return (
-    <div>
-      {/* Login Form */}
-      <h1>Login</h1>
+    <div className="container vibrant">
+      <header className="header">
+        <h1>Driver Portal</h1>
+        <p>Your one-stop solution for driver and admin management</p>
+      </header>
+
       {!isLoggedIn ? (
-        <form onSubmit={handleLogin}>
-          <div>
-            <label>
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={loginData.email}
-                onChange={handleLoginChange}
-                required
-              />
-            </label>
+        <form onSubmit={handleLogin} className="form-box login-box shadow">
+          <h2>Login</h2>
+          <div className="form-group">
+            <label>Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={loginData.email}
+              onChange={handleLoginChange}
+              required
+              className="form-control"
+            />
           </div>
-          <div>
-            <label>
-              Password:
-              <input
-                type="password"
-                name="password"
-                value={loginData.password}
-                onChange={handleLoginChange}
-                required
-              />
-            </label>
+          <div className="form-group">
+            <label>Password:</label>
+            <input
+              type="password"
+              name="password"
+              value={loginData.password}
+              onChange={handleLoginChange}
+              required
+              className="form-control"
+            />
           </div>
-          <button type="submit">Login</button>
+          <button type="submit" className="btn btn-primary">
+            Login
+          </button>
+          {responseMessage && <p className="error-message">{responseMessage}</p>}
         </form>
       ) : (
-        <div>
-          <p>Logged in successfully!</p>
-          <button onClick={handleLogout}>Logout</button>
+        <div className="dashboard">
+          <p className="welcome-message">{responseMessage}</p>
+          <div className="button-group">
+            <button
+              className={`btn ${currentView === "registration" ? "btn-active" : "btn-secondary"}`}
+              onClick={() => setCurrentView("registration")}
+            >
+              Registration
+            </button>
+            <button
+              className={`btn ${currentView === "drivers" ? "btn-active" : "btn-secondary"}`}
+              onClick={() => setCurrentView("drivers")}
+            >
+              Work with Drivers
+            </button>
+            <button className="btn btn-danger" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Registration Form */}
-      <h1>Registration</h1>
-      <form onSubmit={handleRegistration}>
-        <div>
-          <label>
-            First Name:
+      {currentView === "registration" && (
+        <form onSubmit={handleRegistration} className="form-box registration-box shadow">
+          <h2>Registration</h2>
+          <div className="form-group">
+            <label>First Name:</label>
             <input
               type="text"
               name="firstname"
               value={formData.firstname}
               onChange={handleChange}
               required
+              className="form-control"
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Last Name:
+          </div>
+          <div className="form-group">
+            <label>Last Name:</label>
             <input
               type="text"
               name="lastname"
               value={formData.lastname}
               onChange={handleChange}
               required
+              className="form-control"
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Email:
+          </div>
+          <div className="form-group">
+            <label>Email:</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
+              className="form-control"
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password:
+          </div>
+          <div className="form-group">
+            <label>Password:</label>
             <input
               type="password"
               name="password_hash"
               value={formData.password_hash}
               onChange={handleChange}
               required
+              className="form-control"
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Role:
+          </div>
+          <div className="form-group">
+            <label>Role:</label>
             <select
               value={registrationType}
               onChange={(e) => setRegistrationType(e.target.value)}
+              className="form-control"
             >
               <option value="admin">Admin</option>
               <option value="driver">Driver</option>
               <option value="mechanic">Mechanic</option>
             </select>
-          </label>
-        </div>
+          </div>
 
-        {/* Additional fields for driver or mechanic */}
-        {registrationType !== "admin" && (
-          <>
-            <div>
-              <label>
-                Age:
+          {registrationType !== "admin" && (
+            <>
+              <div className="form-group">
+                <label>Age:</label>
                 <input
                   type="number"
                   name="age"
+                  value={formData.additionalData.age}
                   onChange={handleAdditionalChange}
                   required
+                  className="form-control"
                 />
-              </label>
-            </div>
-            <div>
-              <label>
-                Sex:
+              </div>
+              <div className="form-group">
+                <label>Sex:</label>
                 <select
                   name="sex"
+                  value={formData.additionalData.sex}
                   onChange={handleAdditionalChange}
                   required
+                  className="form-control"
                 >
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                 </select>
-              </label>
-            </div>
-            {registrationType === "driver" && (
-              <>
-                <div>
-                  <label>
-                    Driver Rating:
+              </div>
+              {registrationType === "driver" && (
+                <>
+                  <div className="form-group">
+                    <label>Driver Rating:</label>
                     <input
                       type="number"
                       name="driver_rating"
+                      value={formData.additionalData.driver_rating}
                       onChange={handleAdditionalChange}
                       required
+                      className="form-control"
                     />
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    Driver Rides:
+                  </div>
+                  <div className="form-group">
+                    <label>Driver Rides:</label>
                     <input
                       type="number"
                       name="driver_rides"
+                      value={formData.additionalData.driver_rides}
                       onChange={handleAdditionalChange}
                       required
+                      className="form-control"
                     />
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    Driver Time Accidents:
+                  </div>
+                  <div className="form-group">
+                    <label>Driver Time Accidents:</label>
                     <input
                       type="number"
                       name="driver_time_accidents"
+                      value={formData.additionalData.driver_time_accidents}
                       onChange={handleAdditionalChange}
                       required
+                      className="form-control"
                     />
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    First Ride Date:
+                  </div>
+                  <div className="form-group">
+                    <label>First Ride Date:</label>
                     <input
                       type="date"
                       name="first_ride_date"
+                      value={formData.additionalData.first_ride_date}
                       onChange={handleAdditionalChange}
                       required
+                      className="form-control"
                     />
-                  </label>
-                </div>
-              </>
-            )}
-            {registrationType === "mechanic" && (
-              <>
-                <div>
-                  <label>
-                    Mechanic Rating:
+                  </div>
+                </>
+              )}
+              {registrationType === "mechanic" && (
+                <>
+                  <div className="form-group">
+                    <label>Mechanic Rating:</label>
                     <input
                       type="number"
                       name="mechanic_rating"
+                      value={formData.additionalData.mechanic_rating}
                       onChange={handleAdditionalChange}
                       required
+                      className="form-control"
                     />
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    Car Times Repaired:
+                  </div>
+                  <div className="form-group">
+                    <label>Car Times Repaired:</label>
                     <input
                       type="number"
                       name="car_times_repaired"
+                      value={formData.additionalData.car_times_repaired}
                       onChange={handleAdditionalChange}
                       required
+                      className="form-control"
                     />
-                  </label>
-                </div>
-              </>
-            )}
-          </>
-        )}
-        <button type="submit">Register</button>
-      </form>
+                  </div>
+                </>
+              )}
+            </>
+          )}
 
-      {responseMessage && <p>{responseMessage}</p>}
+          <button type="submit" className="btn btn-success">
+            Register
+          </button>
+
+          {responseMessage && <p className="error-message">{responseMessage}</p>}
+        </form>
+      )}
+
+      {currentView === "drivers" && <DriverManagement />}
     </div>
   );
 };
