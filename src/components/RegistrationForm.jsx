@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import DriverManagement from "./DriverManagement";
+import { useNavigate } from "react-router-dom";
 import axios from "../api/api";
 import "../styles.css";
 
 const RegistrationForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -24,6 +25,8 @@ const RegistrationForm = () => {
 
   const [registrationType, setRegistrationType] = useState("admin");
   const [responseMessage, setResponseMessage] = useState("");
+  const [userRole, setUserRole] = useState(""); // Новое состояние для роли пользователя
+
 
   const [loginData, setLoginData] = useState({
     email: "",
@@ -32,6 +35,8 @@ const RegistrationForm = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentView, setCurrentView] = useState("registration");
+
+  // const navigate = useNavigate(); // to handle redirection after login
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,6 +68,19 @@ const RegistrationForm = () => {
       const response = await axios.post(endpoint, payload);
       setIsLoggedIn(true);
       setResponseMessage(`Welcome, ${loginData.email}!`);
+      setUserRole(response.data.role); // Сохранение роли пользователя
+
+      console.log("Role: ", response.data.role);
+
+      // Используйте переменную navigate, созданную выше
+      if (response.data.role === "UserRoleEnum.MECHANIC") {
+        navigate("/mechanic-update"); // Переход на страницу для механика
+      } 
+      else if (response.data.role === "UserRoleEnum.ADMIN") {
+        navigate("/admin-page");
+      } else {
+        navigate("/"); // Переход на общую панель
+      }
     } catch (error) {
       setResponseMessage(`Login failed: ${error.response?.data?.detail || "An error occurred"}`);
     }
@@ -77,11 +95,11 @@ const RegistrationForm = () => {
     if (registrationType !== "admin" && !formData.additionalData.age) {
       return setResponseMessage("Age is required for drivers and mechanics!");
     }
-  
+
     try {
       const endpoint = `/access/registration/${registrationType}`;
       let payload = {};
-  
+
       if (registrationType === "admin") {
         payload = {
           firstname: formData.firstname,
@@ -118,7 +136,7 @@ const RegistrationForm = () => {
           },
         };
       }
-  
+
       const response = await axios.post(endpoint, payload);
       setResponseMessage(`Success: ${response.data}`);
     } catch (error) {
@@ -132,9 +150,9 @@ const RegistrationForm = () => {
       }
     }
   };
-  
 
   const handleLogout = () => {
+    setUserRole(""); // Сброс роли при выходе
     setIsLoggedIn(false);
     setCurrentView("registration");
     setResponseMessage("Logged out successfully.");
@@ -180,18 +198,13 @@ const RegistrationForm = () => {
       ) : (
         <div className="dashboard">
           <p className="welcome-message">{responseMessage}</p>
+          <p className="role-display">Your role: <strong>{userRole}</strong></p>
           <div className="button-group">
             <button
               className={`btn ${currentView === "registration" ? "btn-active" : "btn-secondary"}`}
               onClick={() => setCurrentView("registration")}
             >
               Registration
-            </button>
-            <button
-              className={`btn ${currentView === "drivers" ? "btn-active" : "btn-secondary"}`}
-              onClick={() => setCurrentView("drivers")}
-            >
-              Work with Drivers
             </button>
             <button className="btn btn-danger" onClick={handleLogout}>
               Logout
@@ -295,40 +308,16 @@ const RegistrationForm = () => {
                       name="driver_rating"
                       value={formData.additionalData.driver_rating}
                       onChange={handleAdditionalChange}
-                      required
                       className="form-control"
                     />
                   </div>
                   <div className="form-group">
-                    <label>Driver Rides:</label>
+                    <label>Number of Rides:</label>
                     <input
                       type="number"
                       name="driver_rides"
                       value={formData.additionalData.driver_rides}
                       onChange={handleAdditionalChange}
-                      required
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Driver Time Accidents:</label>
-                    <input
-                      type="number"
-                      name="driver_time_accidents"
-                      value={formData.additionalData.driver_time_accidents}
-                      onChange={handleAdditionalChange}
-                      required
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>First Ride Date:</label>
-                    <input
-                      type="date"
-                      name="first_ride_date"
-                      value={formData.additionalData.first_ride_date}
-                      onChange={handleAdditionalChange}
-                      required
                       className="form-control"
                     />
                   </div>
@@ -343,7 +332,6 @@ const RegistrationForm = () => {
                       name="mechanic_rating"
                       value={formData.additionalData.mechanic_rating}
                       onChange={handleAdditionalChange}
-                      required
                       className="form-control"
                     />
                   </div>
@@ -354,7 +342,6 @@ const RegistrationForm = () => {
                       name="car_times_repaired"
                       value={formData.additionalData.car_times_repaired}
                       onChange={handleAdditionalChange}
-                      required
                       className="form-control"
                     />
                   </div>
@@ -363,15 +350,13 @@ const RegistrationForm = () => {
             </>
           )}
 
-          <button type="submit" className="btn btn-success">
+          <button type="submit" className="btn btn-primary">
             Register
           </button>
 
           {responseMessage && <p className="error-message">{responseMessage}</p>}
         </form>
       )}
-
-      {currentView === "drivers" && <DriverManagement />}
     </div>
   );
 };
