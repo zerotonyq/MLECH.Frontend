@@ -76,8 +76,11 @@ const RegistrationForm = () => {
       if (response.data.role === "UserRoleEnum.MECHANIC") {
         navigate("/mechanic-update"); // Переход на страницу для механика
       } 
+      else if (response.data.role === "UserRoleEnum.DRIVER") {
+        navigate("/driver-update");
+      }
       else if (response.data.role === "UserRoleEnum.ADMIN") {
-        navigate("/admin-page");
+        navigate("/admin-page-main");
       } else {
         navigate("/"); // Переход на общую панель
       }
@@ -125,6 +128,7 @@ const RegistrationForm = () => {
                   driver_rating: formData.additionalData.driver_rating,
                   driver_rides: formData.additionalData.driver_rides,
                   driver_time_accidents: formData.additionalData.driver_time_accidents,
+                  first_ride_date: formData.additionalData.first_ride_date || new Date().toISOString().split('T')[0],
                   first_ride_date: formData.additionalData.first_ride_date,
                 }
               : {
@@ -300,29 +304,50 @@ const RegistrationForm = () => {
                 </select>
               </div>
               {registrationType === "driver" && (
-                <>
-                  <div className="form-group">
-                    <label>Driver Rating:</label>
-                    <input
-                      type="number"
-                      name="driver_rating"
-                      value={formData.additionalData.driver_rating}
-                      onChange={handleAdditionalChange}
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Number of Rides:</label>
-                    <input
-                      type="number"
-                      name="driver_rides"
-                      value={formData.additionalData.driver_rides}
-                      onChange={handleAdditionalChange}
-                      className="form-control"
-                    />
-                  </div>
-                </>
-              )}
+              <>
+                <div className="form-group">
+                  <label>Driver Rating:</label>
+                  <input
+                    type="number"
+                    name="driver_rating"
+                    value={formData.additionalData.driver_rating}
+                    onChange={handleAdditionalChange}
+                    className="form-control"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Number of Rides:</label>
+                  <input
+                    type="number"
+                    name="driver_rides"
+                    value={formData.additionalData.driver_rides}
+                    onChange={handleAdditionalChange}
+                    className="form-control"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Number of Accidents:</label>
+                  <input
+                    type="number"
+                    name="driver_time_accidents"
+                    value={formData.additionalData.driver_time_accidents}
+                    onChange={handleAdditionalChange}
+                    className="form-control"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>First Ride Date:</label>
+                  <input
+                    type="date"
+                    name="first_ride_date"
+                    value={formData.additionalData.first_ride_date}
+                    onChange={handleAdditionalChange}
+                    className="form-control"
+                  />
+                </div>
+              </>
+            )}
+
               {registrationType === "mechanic" && (
                 <>
                   <div className="form-group">

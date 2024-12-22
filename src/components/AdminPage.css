@@ -1,0 +1,35 @@
+.admin-page {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .actions {
+    margin: 20px 0;
+  }
+  
+  .mechanics-list, .mechanic-details, .mechanic-fixes {
+    margin: 20px 0;
+  }
+  
+  .mechanic-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .mechanic-actions button {
+    margin-right: 10px;
+  }
+  
+  .message {
+    color: green;
+    font-weight: bold;
+  }
+  
