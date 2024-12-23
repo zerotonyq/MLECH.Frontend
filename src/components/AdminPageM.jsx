@@ -129,122 +129,150 @@ const AdminPage = () => {
 };
 
 
-  return (
-    <div className="admin-page">
-      <header>
-        <h1>Админ-панель</h1>
-        <p>Управление механиками</p>
-      </header>
+return (
+  <div className="admin-page">
+    <header>
+      <h1>Админ-панель</h1>
+      <p>Управление механиками</p>
+    </header>
 
-      <div className="actions">
-        <button onClick={fetchAllMechanics} className="btn btn-primary">Получить всех механиков</button>
-      </div>
-
-      {message && <p className="message">{message}</p>}
-
-      {mechanics.length > 0 && (
-        <div className="mechanics-list">
-          <h2>Список механиков</h2>
-          <ul>
-            {mechanics.map((mechanic) => (
-              <li key={mechanic.mechanic_id}>
-                <strong>{mechanic.firstname} {mechanic.lastname}</strong> (ID: {mechanic.mechanic_id})
-                <button onClick={() => fetchMechanicById(mechanic.mechanic_id)}>Посмотреть</button>
-                <button onClick={() => fetchMechanicFixes(mechanic.mechanic_id)}>Работы</button>
-                <button onClick={() => deleteMechanic(mechanic.mechanic_id)}>Удалить</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {selectedMechanic && (
-        <div className="mechanic-details">
-          <h2>Детали механика</h2>
-          <p><strong>ID:</strong> {selectedMechanic.mechanic_id}</p>
-          <p><strong>Имя:</strong> {selectedMechanic.firstname}</p>
-          <p><strong>Email:</strong> {selectedMechanic.email}</p>
-          <p><strong>Возраст:</strong> {selectedMechanic.age}</p>
-          
-          <h3>Обновить данные механика</h3>
-          <form>
-            <label>
-              Имя:
-              <input
-                type="text"
-                name="user_data.firstname"
-                value={updatedData.user_data.firstname}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <label>
-              Фамилия:
-              <input
-                type="text"
-                name="user_data.lastname"
-                value={updatedData.user_data.lastname}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <label>
-              Email:
-              <input
-                type="email"
-                name="user_data.email"
-                value={updatedData.user_data.email}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <label>
-              Возраст:
-              <input
-                type="number"
-                name="mechanic_data.age"
-                value={updatedData.mechanic_data.age}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <label>
-              Рейтинг механика:
-              <input
-                type="number"
-                name="mechanic_data.mechanic_rating"
-                value={updatedData.mechanic_data.mechanic_rating}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <label>
-              Количество отремонтированных машин:
-              <input
-                type="number"
-                name="mechanic_data.car_times_repaired"
-                value={updatedData.mechanic_data.car_times_repaired}
-                onChange={handleInputChange}
-              />
-            </label>
-            <br />
-            <button type="button" onClick={() => updateMechanic(selectedMechanic.mechanic_id)}>Обновить</button>
-          </form>
-        </div>
-      )}
-
-      {fixes.length > 0 && (
-        <div className="mechanic-fixes">
-          <h2>Работы механика</h2>
-          <ul>
-            {fixes.map((fix, index) => (
-              <li key={index}>{fix.description || "Описание недоступно"}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+    <div className="actions">
+      <button onClick={fetchAllMechanics} className="btn btn-primary">Получить всех механиков</button>
     </div>
-  );
+
+    {message && <p className="message">{message}</p>}
+
+    {mechanics.length > 0 && (
+      <div className="mechanics-list">
+        <h2>Список механиков</h2>
+        <ul>
+          {mechanics.map((mechanic) => (
+            <li key={mechanic.mechanic_id}>
+              <strong>{mechanic.firstname} {mechanic.lastname}</strong> (ID: {mechanic.mechanic_id})
+              <button onClick={() => fetchMechanicById(mechanic.mechanic_id)}>Посмотреть</button>
+              <button onClick={() => fetchMechanicFixes(mechanic.mechanic_id)}>Работы</button>
+              <button onClick={() => deleteMechanic(mechanic.mechanic_id)}>Удалить</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {selectedMechanic && (
+      <div className="mechanic-details">
+        <h2>Детали механика</h2>
+        <p><strong>ID:</strong> {selectedMechanic.mechanic_id}</p>
+        <p><strong>Имя:</strong> {selectedMechanic.firstname}</p>
+        <p><strong>Email:</strong> {selectedMechanic.email}</p>
+        <p><strong>Возраст:</strong> {selectedMechanic.age}</p>
+
+        <h3>Обновить данные механика</h3>
+        <form>
+          <label>
+            Имя:
+            <input
+              type="text"
+              name="user_data.firstname"
+              value={updatedData.user_data.firstname}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <label>
+            Фамилия:
+            <input
+              type="text"
+              name="user_data.lastname"
+              value={updatedData.user_data.lastname}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <label>
+            Email:
+            <input
+              type="email"
+              name="user_data.email"
+              value={updatedData.user_data.email}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <label>
+            Возраст:
+            <input
+              type="number"
+              name="mechanic_data.age"
+              value={updatedData.mechanic_data.age}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <label>
+            Рейтинг механика:
+            <input
+              type="number"
+              name="mechanic_data.mechanic_rating"
+              value={updatedData.mechanic_data.mechanic_rating}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <label>
+            Количество отремонтированных машин:
+            <input
+              type="number"
+              name="mechanic_data.car_times_repaired"
+              value={updatedData.mechanic_data.car_times_repaired}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <button type="button" onClick={() => updateMechanic(selectedMechanic.mechanic_id)}>Обновить</button>
+        </form>
+      </div>
+    )}
+
+    {fixes.length > 0 && (
+      <div className="mechanic-fixes">
+        <h2>Работы механика</h2>
+        <table className="fixes-table">
+          <thead>
+            <tr>
+              <th>Дата работы</th>
+              <th>Тип работы</th>
+              <th>Степень повреждения</th>
+              <th>Продолжительность работы (сек)</th>
+              <th>Номер машины</th>
+              <th>Модель</th>
+              <th>Тип топлива</th>
+              <th>Год начала эксплуатации</th>
+              <th>Год работы</th>
+              <th>Пробег</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fixes.map((fix, index) => (
+              <tr key={index}>
+                <td>{new Date(fix.fix_date).toLocaleString()}</td>
+                <td>{fix.work_type}</td>
+                <td>{fix.destroy_degree}</td>
+                <td>{fix.work_duration}</td>
+                <td>{fix.car_number}</td>
+                <td>{fix.model}</td>
+                <td>{fix.fuel_type}</td>
+                <td>{fix.year_to_start}</td>
+                <td>{fix.year_to_work}</td>
+                <td>{fix.rides}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default AdminPage;

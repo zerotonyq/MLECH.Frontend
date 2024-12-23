@@ -261,7 +261,17 @@ const AdminPageDrivers = () => {
           <h2>Список поездок водителя</h2>
           <ul>
             {rides.map((ride, index) => (
-              <li key={index}>{ride.description || "Описание отсутствует"}</li>
+              <li key={index}>
+                <p><strong>Дата поездки:</strong> {ride.ride_date}</p>
+                <p><strong>Стоимость:</strong> {ride.ride_cost}</p>
+                <p><strong>Средняя скорость:</strong> {ride.speed_avg} км/ч</p>
+                <p><strong>Максимальная скорость:</strong> {ride.speed_max} км/ч</p>
+                <p><strong>Количество остановок:</strong> {ride.stop_times}</p>
+                <p><strong>Расстояние:</strong> {ride.distance} км</p>
+                <p><strong>Заправки:</strong> {ride.refueling}</p>
+                <p><strong>Качество поездки:</strong> {ride.user_ride_quality}</p>
+                <p><strong>Отклонение от нормы:</strong> {ride.deviation_normal}</p>
+              </li>
             ))}
           </ul>
         </div>
