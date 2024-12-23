@@ -6,6 +6,7 @@ import DriverUpdatePage from './components/DriverUpdatePage';
 import AdminPageM from './components/AdminPageM';
 import AdminPageDrivers from './components/AdminPageDrivers';
 import AdminPageMain from './components/AdminPageMain';
+import AdminPageCars from './components/AdminPageCars';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/admin-page-main" element={<AdminPageMain />} />
         <Route path="/driver-update" element={<DriverUpdatePage />} />
         <Route path="/admin-page-drivers" element={<AdminPageDrivers />} />
+        <Route path="/admin-page-cars" element={<AdminPageCars />} />
         {/* Перенаправление для неизвестных путей */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
