@@ -13,7 +13,15 @@ const AdminPageMain = () => {
   };
 
   const handleCarsClick = () => {
-    navigate("/admin-page-cars"); // Путь для страницы управления машинами
+    navigate("/admin-page-cars");
+  };
+
+  const handleFixesClick = () => {
+    navigate("/admin-page-fixes");
+  };
+
+  const handleRidesClick = () => {
+    navigate("/admin-page-rides");
   };
 
   return (
@@ -51,18 +59,48 @@ const AdminPageMain = () => {
           Перейти на страницу управления водителями
         </button>
         <button
-          onClick={handleCarsClick} // Обработчик для страницы машин
+          onClick={handleCarsClick}
           style={{
             padding: "10px 20px",
             fontSize: "16px",
-            backgroundColor: "#FFC107", // Желтый цвет для кнопки
+            backgroundColor: "#FFC107",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginRight: "10px",
+          }}
+        >
+          Перейти на страницу управления машинами
+        </button>
+        <button
+          onClick={handleFixesClick}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#DC3545", // Красный цвет для кнопки
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginRight: "10px",
+          }}
+        >
+          Перейти на страницу управления починками
+        </button>
+        <button
+          onClick={handleRidesClick}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#17A2B8", // Голубой цвет для кнопки
             color: "white",
             border: "none",
             borderRadius: "5px",
             cursor: "pointer",
           }}
         >
-          Перейти на страницу управления машинами
+          Перейти на страницу управления поездками
         </button>
       </div>
     </div>
