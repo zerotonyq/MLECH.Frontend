@@ -6,6 +6,7 @@ const AdminPageCars = () => {
   const [cars, setCars] = useState([]);
   const [selectedCar, setSelectedCar] = useState(null);
   const [message, setMessage] = useState("");
+  const [carIdInput, setCarIdInput] = useState("");
   const [newCar, setNewCar] = useState({
     car_number: "",
     is_rented: false,
@@ -42,16 +43,25 @@ const AdminPageCars = () => {
     }
   };
 
-  // Загрузка данных машины по ID
-  const fetchCarById = async (carId) => {
-    try {
-      const response = await axios.get(`${baseURL}/cars/get_by_id/${carId}`);
-      setSelectedCar(response.data);
-      setMessage(`Машина с ID ${carId} успешно загружена.`);
-    } catch (error) {
-      setMessage("Ошибка загрузки машины.");
-    }
-  };
+    // Загрузка данных машины по ID
+    const fetchCarById = async (carId) => {
+      try {
+        const response = await axios.get(`${baseURL}/cars/get_by_id/${carId}`);
+        setSelectedCar(response.data);
+        setMessage(`Машина с ID ${carId} успешно загружена.`);
+      } catch (error) {
+        setMessage("Ошибка загрузки машины.");
+      }
+    };
+  
+    // Обработчик нажатия на кнопку загрузки машины по ID
+    const handleFetchCarById = () => {
+      if (carIdInput.trim() === "") {
+        setMessage("Введите корректный ID машины.");
+        return;
+      }
+      fetchCarById(carIdInput);
+    };
 
   // Добавление новой машины
   const addCar = async () => {
@@ -119,10 +129,21 @@ const AdminPageCars = () => {
         <button onClick={fetchAllCars} className="btn btn-primary">
           Загрузить все машины
         </button>
+
+        {/* Новая кнопка для загрузки машины по ID */}
+        <input
+          type="text"
+          placeholder="Введите ID машины"
+          value={carIdInput}
+          onChange={(e) => setCarIdInput(e.target.value)}
+          className="input-id"
+        />
+        <button onClick={handleFetchCarById} className="btn btn-secondary">
+          Загрузить машину по ID
+        </button>
       </div>
 
       {message && <p className="message">{message}</p>}
-
       <div className="new-car-form">
         <h2>Добавить новую машину</h2>
         <div>

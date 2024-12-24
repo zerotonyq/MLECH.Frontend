@@ -7,6 +7,7 @@ const AdminPage = () => {
   const [selectedMechanic, setSelectedMechanic] = useState(null);
   const [fixes, setFixes] = useState([]);
   const [message, setMessage] = useState("");
+  const [mechanicIdInput, setMechanicIdInput] = useState("");
   const [updatedData, setUpdatedData] = useState({
     user_data: {
       firstname: "",
@@ -21,6 +22,20 @@ const AdminPage = () => {
   });
 
   const baseURL = "http://127.0.0.1:8000"; // Убедитесь, что этот адрес верный
+
+  const fetchMechanicByIdFromInput = async () => {
+    if (!mechanicIdInput) {
+      setMessage("Пожалуйста, введите ID механика.");
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseURL}/mechanics/get_by_id/${mechanicIdInput}`);
+      setSelectedMechanic(response.data);
+      setMessage(`Механик с ID ${mechanicIdInput} успешно загружен.`);
+    } catch (error) {
+      setMessage(`Ошибка: ${error.response?.data?.detail || "Не удалось загрузить данные механика."}`);
+    }
+  };
 
   // 1. Получить всех механиков
   const fetchAllMechanics = async () => {
@@ -138,6 +153,19 @@ return (
 
     <div className="actions">
       <button onClick={fetchAllMechanics} className="btn btn-primary">Получить всех механиков</button>
+
+      <div>
+        <label>
+          Введите ID механика:
+          <input
+            type="number"
+            value={mechanicIdInput}
+            onChange={(e) => setMechanicIdInput(e.target.value)}
+            placeholder="ID механика"
+          />
+        </label>
+        <button onClick={fetchMechanicByIdFromInput} className="btn btn-primary">Получить механика по ID</button>
+      </div>
     </div>
 
     {message && <p className="message">{message}</p>}
@@ -163,73 +191,11 @@ return (
         <h2>Детали механика</h2>
         <p><strong>ID:</strong> {selectedMechanic.mechanic_id}</p>
         <p><strong>Имя:</strong> {selectedMechanic.firstname}</p>
+        <p><strong>Фамилия:</strong> {selectedMechanic.lastname}</p>
         <p><strong>Email:</strong> {selectedMechanic.email}</p>
         <p><strong>Возраст:</strong> {selectedMechanic.age}</p>
-
-        <h3>Обновить данные механика</h3>
-        <form>
-          <label>
-            Имя:
-            <input
-              type="text"
-              name="user_data.firstname"
-              value={updatedData.user_data.firstname}
-              onChange={handleInputChange}
-            />
-          </label>
-          <br />
-          <label>
-            Фамилия:
-            <input
-              type="text"
-              name="user_data.lastname"
-              value={updatedData.user_data.lastname}
-              onChange={handleInputChange}
-            />
-          </label>
-          <br />
-          <label>
-            Email:
-            <input
-              type="email"
-              name="user_data.email"
-              value={updatedData.user_data.email}
-              onChange={handleInputChange}
-            />
-          </label>
-          <br />
-          <label>
-            Возраст:
-            <input
-              type="number"
-              name="mechanic_data.age"
-              value={updatedData.mechanic_data.age}
-              onChange={handleInputChange}
-            />
-          </label>
-          <br />
-          <label>
-            Рейтинг механика:
-            <input
-              type="number"
-              name="mechanic_data.mechanic_rating"
-              value={updatedData.mechanic_data.mechanic_rating}
-              onChange={handleInputChange}
-            />
-          </label>
-          <br />
-          <label>
-            Количество отремонтированных машин:
-            <input
-              type="number"
-              name="mechanic_data.car_times_repaired"
-              value={updatedData.mechanic_data.car_times_repaired}
-              onChange={handleInputChange}
-            />
-          </label>
-          <br />
-          <button type="button" onClick={() => updateMechanic(selectedMechanic.mechanic_id)}>Обновить</button>
-        </form>
+        <p><strong>Рейтинг механика:</strong> {selectedMechanic.mechanic_rating}</p>
+        <p><strong>Количество отремонтированных машин:</strong> {selectedMechanic.car_times_repaired}</p>
       </div>
     )}
 
@@ -272,6 +238,7 @@ return (
     )}
   </div>
 );
+
 
 };
 

@@ -9,7 +9,7 @@ const AdminPageFixes = () => {
   const [newFix, setNewFix] = useState({
     car_id: 0,
     mechanic_id: 0,
-    fix_date: new Date().toISOString().slice(0, 16), // ISO format for datetime-local
+    fix_date: new Date().toISOString().slice(0, 16),
     work_type: "",
     destroy_degree: 0,
     work_duration: 0,
@@ -104,6 +104,24 @@ const AdminPageFixes = () => {
 
       {message && <p className="message">{message}</p>}
 
+      <section className="fetch-fix-by-id">
+        <h2>Получить ремонт по ID</h2>
+        <div className="form-inline">
+          <label>ID ремонта:</label>
+          <input
+            type="number"
+            placeholder="Введите ID"
+            onChange={(e) => setSelectedFix({ fix_info_id: e.target.value })}
+          />
+          <button
+            onClick={() => fetchFixById(selectedFix?.fix_info_id)}
+            className="btn btn-primary"
+          >
+            Получить
+          </button>
+        </div>
+      </section>
+
       <section className="new-fix-section">
         <h2>Добавить новый ремонт</h2>
         <div className="form-grid">
@@ -193,59 +211,16 @@ const AdminPageFixes = () => {
       </section>
 
       {selectedFix && (
-        <section className="selected-fix-section">
+        <section className="selected-fix-details">
           <h2>Детали ремонта ID {selectedFix.fix_info_id}</h2>
-          <p><strong>ID машины:</strong> {selectedFix.car_id}</p>
-          <p><strong>ID механика:</strong> {selectedFix.mechanic_id}</p>
-          <p><strong>Дата ремонта:</strong> {selectedFix.fix_date}</p>
-          <p><strong>Тип работы:</strong> {selectedFix.work_type}</p>
-          <p><strong>Степень разрушения:</strong> {selectedFix.destroy_degree}</p>
-          <p><strong>Длительность работы:</strong> {selectedFix.work_duration} минут</p>
-          <h3>Обновить ремонт</h3>
-          <div className="form-grid">
-            <div>
-              <label>Дата ремонта</label>
-              <input
-                type="datetime-local"
-                name="fix_date"
-                value={updatedFix.fix_date}
-                onChange={handleUpdatedFixChange}
-              />
-            </div>
-            <div>
-              <label>Тип работы</label>
-              <input
-                type="text"
-                name="work_type"
-                value={updatedFix.work_type}
-                onChange={handleUpdatedFixChange}
-              />
-            </div>
-            <div>
-              <label>Степень разрушения</label>
-              <input
-                type="number"
-                name="destroy_degree"
-                value={updatedFix.destroy_degree}
-                onChange={handleUpdatedFixChange}
-              />
-            </div>
-            <div>
-              <label>Длительность работы</label>
-              <input
-                type="number"
-                name="work_duration"
-                value={updatedFix.work_duration}
-                onChange={handleUpdatedFixChange}
-              />
-            </div>
-          </div>
-          <button
-            onClick={() => updateFix(selectedFix.fix_info_id)}
-            className="btn btn-warning"
-          >
-            Обновить ремонт
-          </button>
+          <ul>
+            <li><strong>ID машины:</strong> {selectedFix.car_id}</li>
+            <li><strong>ID механика:</strong> {selectedFix.mechanic_id}</li>
+            <li><strong>Дата ремонта:</strong> {new Date(selectedFix.fix_date).toLocaleString()}</li>
+            <li><strong>Тип работы:</strong> {selectedFix.work_type}</li>
+            <li><strong>Степень разрушения:</strong> {selectedFix.destroy_degree}</li>
+            <li><strong>Длительность работы:</strong> {selectedFix.work_duration} минут</li>
+          </ul>
         </section>
       )}
     </div>

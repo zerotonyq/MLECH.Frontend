@@ -21,6 +21,7 @@ const AdminPageDrivers = () => {
       first_ride_date: "",
     },
   });
+  const [driverIdInput, setDriverIdInput] = useState(""); // For the driver ID input field
 
   const baseURL = "http://127.0.0.1:8000";
 
@@ -126,6 +127,18 @@ const AdminPageDrivers = () => {
     }
   };
 
+  const handleDriverIdChange = (event) => {
+    setDriverIdInput(event.target.value);
+  };
+
+  const handleFetchDriverById = () => {
+    if (driverIdInput) {
+      fetchDriverById(driverIdInput);
+    } else {
+      setMessage("Пожалуйста, введите ID водителя.");
+    }
+  };
+
   return (
     <div className="admin-page">
       <header>
@@ -135,6 +148,17 @@ const AdminPageDrivers = () => {
 
       <div className="actions">
         <button onClick={fetchAllDrivers} className="btn btn-primary">Загрузить всех водителей</button>
+
+        {/* Container for the "Получить водителя по ID" button and input */}
+        <div className="fetch-driver">
+          <input
+            type="number"
+            placeholder="Введите ID водителя"
+            value={driverIdInput}
+            onChange={handleDriverIdChange}
+          />
+          <button onClick={handleFetchDriverById} className="btn btn-secondary">Получить водителя по ID</button>
+        </div>
       </div>
 
       {message && <p className="message">{message}</p>}
@@ -158,16 +182,18 @@ const AdminPageDrivers = () => {
       {selectedDriver && (
         <div className="driver-details">
           <h2>Детали водителя</h2>
-          <p><strong>ID:</strong> {selectedDriver.driver_id}</p>
-          <p><strong>Имя:</strong> {selectedDriver.firstname}</p>
-          <p><strong>Фамилия:</strong> {selectedDriver.lastname}</p>
-          <p><strong>Email:</strong> {selectedDriver.email}</p>
-          <p><strong>Возраст:</strong> {selectedDriver.age}</p>
-          <p><strong>Пол:</strong> {selectedDriver.sex}</p>
-          <p><strong>Рейтинг:</strong> {selectedDriver.driver_rating}</p>
-          <p><strong>Всего поездок:</strong> {selectedDriver.driver_rides}</p>
-          <p><strong>Всего аварий:</strong> {selectedDriver.driver_time_accidents}</p>
-          <p><strong>Дата первой поездки:</strong> {selectedDriver.first_ride_date}</p>
+          <div className="details-card">
+            <p><strong>ID:</strong> {selectedDriver.driver_id}</p>
+            <p><strong>Имя:</strong> {selectedDriver.firstname}</p>
+            <p><strong>Фамилия:</strong> {selectedDriver.lastname}</p>
+            <p><strong>Email:</strong> {selectedDriver.email}</p>
+            <p><strong>Возраст:</strong> {selectedDriver.age}</p>
+            <p><strong>Пол:</strong> {selectedDriver.sex}</p>
+            <p><strong>Рейтинг:</strong> {selectedDriver.driver_rating}</p>
+            <p><strong>Всего поездок:</strong> {selectedDriver.driver_rides}</p>
+            <p><strong>Всего аварий:</strong> {selectedDriver.driver_time_accidents}</p>
+            <p><strong>Дата первой поездки:</strong> {selectedDriver.first_ride_date}</p>
+          </div>
 
           <h3>Обновить данные водителя</h3>
           <form>

@@ -27,7 +27,7 @@ const AdminPageMain = () => {
 
   const handlePredictionClick = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8001/ml/predict", {
+      const response = await fetch("http://127.0.0.1:8000/cars/predict_cars_data", {
         method: "GET",
         headers: {
           Accept: "application/json",
