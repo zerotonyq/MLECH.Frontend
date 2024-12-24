@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AdminPageMain = () => {
   const navigate = useNavigate();
+  const [predictionResponse, setPredictionResponse] = useState(null);
 
   const handleMechanicsClick = () => {
     navigate("/admin-page-mechanics");
@@ -22,6 +23,22 @@ const AdminPageMain = () => {
 
   const handleRidesClick = () => {
     navigate("/admin-page-rides");
+  };
+
+  const handlePredictionClick = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8001/ml/predict", {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      setPredictionResponse(response.status);
+    } catch (error) {
+      console.error("Error fetching prediction:", error);
+      setPredictionResponse("Error");
+    }
   };
 
   return (
@@ -78,7 +95,7 @@ const AdminPageMain = () => {
           style={{
             padding: "10px 20px",
             fontSize: "16px",
-            backgroundColor: "#DC3545", // Красный цвет для кнопки
+            backgroundColor: "#DC3545",
             color: "white",
             border: "none",
             borderRadius: "5px",
@@ -93,7 +110,7 @@ const AdminPageMain = () => {
           style={{
             padding: "10px 20px",
             fontSize: "16px",
-            backgroundColor: "#17A2B8", // Голубой цвет для кнопки
+            backgroundColor: "#17A2B8",
             color: "white",
             border: "none",
             borderRadius: "5px",
@@ -103,6 +120,25 @@ const AdminPageMain = () => {
           Перейти на страницу управления поездками
         </button>
       </div>
+      <button
+        onClick={handlePredictionClick}
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          backgroundColor: "#6C757D", // Gray color
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Выполнить запрос к /ml/predict
+      </button>
+      {predictionResponse && (
+        <div style={{ marginTop: "20px", fontSize: "16px", color: "#555" }}>
+          Результат запроса: {predictionResponse}
+        </div>
+      )}
     </div>
   );
 };
