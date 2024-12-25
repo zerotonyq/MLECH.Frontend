@@ -27,12 +27,14 @@ const AdminPageMain = () => {
 
   const handlePredictionClick = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/cars/predict_cars_data", {
+      const response = await fetch("http://127.0.0.1:8002/ml/predict", {
         method: "GET",
+        timeout: 30000,
         headers: {
           Accept: "application/json",
         },
       });
+      
 
       setPredictionResponse(response.status);
     } catch (error) {

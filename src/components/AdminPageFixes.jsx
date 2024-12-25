@@ -22,10 +22,10 @@ const AdminPageFixes = () => {
   });
   const baseURL = "http://127.0.0.1:8000";
 
-  // Fetch all fixes
-  const fetchAllFixes = async () => {
+   // Fetch all fixes
+   const fetchAllFixes = async () => {
     try {
-      const response = await axios.get(`${baseURL}/fixes/get_all`);
+      const response = await axios.get(`${baseURL}/fixes/get_all`, { timeout: 5000 });
       setFixes(response.data);
       setMessage("Список ремонтов успешно загружен.");
     } catch (error) {
@@ -36,7 +36,7 @@ const AdminPageFixes = () => {
   // Fetch fix by ID
   const fetchFixById = async (fixId) => {
     try {
-      const response = await axios.get(`${baseURL}/fixes/get_by_id/${fixId}`);
+      const response = await axios.get(`${baseURL}/fixes/get_by_id/${fixId}`, { timeout: 5000 });
       setSelectedFix(response.data);
       setMessage(`Ремонт с ID ${fixId} успешно загружен.`);
     } catch (error) {
@@ -49,6 +49,7 @@ const AdminPageFixes = () => {
     try {
       await axios.post(`${baseURL}/fixes/add`, newFix, {
         headers: { "Content-Type": "application/json" },
+        timeout: 5000,
       });
       setMessage("Новый ремонт успешно добавлен.");
       fetchAllFixes();
@@ -62,6 +63,7 @@ const AdminPageFixes = () => {
     try {
       await axios.put(`${baseURL}/fixes/update/${fixId}`, updatedFix, {
         headers: { "Content-Type": "application/json" },
+        timeout: 5000,
       });
       setMessage(`Ремонт с ID ${fixId} успешно обновлен.`);
       fetchAllFixes();
@@ -73,7 +75,7 @@ const AdminPageFixes = () => {
   // Delete fix
   const deleteFix = async (fixId) => {
     try {
-      await axios.delete(`${baseURL}/fixes/delete/${fixId}`);
+      await axios.delete(`${baseURL}/fixes/delete/${fixId}`, { timeout: 5000 });
       setMessage(`Ремонт с ID ${fixId} успешно удален.`);
       fetchAllFixes();
     } catch (error) {

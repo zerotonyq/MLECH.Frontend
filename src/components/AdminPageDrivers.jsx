@@ -28,46 +28,44 @@ const AdminPageDrivers = () => {
   // 1. Загрузить всех водителей
   const fetchAllDrivers = async () => {
     try {
-      const response = await axios.get(`${baseURL}/drivers/get_all`);
+      const response = await axios.get(`${baseURL}/drivers/get_all`, { timeout: 10000 });
       setDrivers(response.data);
       setMessage("Список водителей успешно загружен.");
     } catch (error) {
       setMessage(`Ошибка: ${error.response?.data?.detail || "Не удалось загрузить список водителей."}`);
     }
   };
-
-  // 2. Загрузить данные водителя по ID
+  
   const fetchDriverById = async (driverId) => {
     try {
-      const response = await axios.get(`${baseURL}/drivers/get_by_id/${driverId}`);
+      const response = await axios.get(`${baseURL}/drivers/get_by_id/${driverId}`, { timeout: 5000 });
       setSelectedDriver(response.data);
       setMessage(`Данные водителя с ID ${driverId} успешно загружены.`);
     } catch (error) {
       setMessage(`Ошибка: ${error.response?.data?.detail || "Не удалось загрузить данные водителя."}`);
     }
   };
-
-  // 3. Загрузить поездки водителя
+  
   const fetchDriverRides = async (driverId) => {
     try {
-      const response = await axios.get(`${baseURL}/drivers/get_rides/${driverId}`);
+      const response = await axios.get(`${baseURL}/drivers/get_rides/${driverId}`, { timeout: 5000 });
       setRides(response.data);
       setMessage(`Список поездок водителя с ID ${driverId} успешно загружен.`);
     } catch (error) {
       setMessage(`Ошибка: ${error.response?.data?.detail || "Не удалось загрузить поездки водителя."}`);
     }
   };
-
-  // 4. Удалить водителя
+  
   const deleteDriver = async (driverId) => {
     try {
-      await axios.delete(`${baseURL}/drivers/delete_by_id/${driverId}`);
+      await axios.delete(`${baseURL}/drivers/delete_by_id/${driverId}`, { timeout: 5000 });
       setMessage(`Водитель с ID ${driverId} успешно удалён.`);
-      fetchAllDrivers(); // Обновить список водителей
+      fetchAllDrivers();
     } catch (error) {
       setMessage(`Ошибка: ${error.response?.data?.detail || "Не удалось удалить водителя."}`);
     }
   };
+  
 
   // 5. Обновить данные водителя
   const handleInputChange = (event) => {
@@ -104,12 +102,12 @@ const AdminPageDrivers = () => {
 
   const updateDriver = async (driverId) => {
     if (!validateData()) return;
-
+  
     const requestData = {
       user_data: updatedData.user_data,
       driver_data: updatedData.driver_data,
     };
-
+  
     try {
       await axios.put(
         `${baseURL}/drivers/update_by_id/${driverId}`,
@@ -118,6 +116,7 @@ const AdminPageDrivers = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          timeout: 5000,
         }
       );
       setMessage(`Данные водителя с ID ${driverId} успешно обновлены.`);

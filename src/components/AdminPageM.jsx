@@ -22,6 +22,12 @@ const AdminPage = () => {
   });
 
   const baseURL = "http://127.0.0.1:8000"; // Убедитесь, что этот адрес верный
+  const timeout = 10000; 
+
+  const axiosInstance = axios.create({
+    baseURL: baseURL,
+    timeout: timeout,
+  });
 
   const fetchMechanicByIdFromInput = async () => {
     if (!mechanicIdInput) {

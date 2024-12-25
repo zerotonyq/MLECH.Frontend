@@ -65,7 +65,9 @@ const RegistrationForm = () => {
         password: loginData.password,
       };
 
-      const response = await axios.post(endpoint, payload);
+      const response = await axios.post(endpoint, payload, {
+        timeout: 3000, // Таймаут в миллисекундах
+      });
       setIsLoggedIn(true);
       setResponseMessage(`Welcome, ${loginData.email}!`);
       setUserRole(response.data.role); // Сохранение роли пользователя
@@ -141,7 +143,9 @@ const RegistrationForm = () => {
         };
       }
 
-      const response = await axios.post(endpoint, payload);
+      const response = await axios.post(endpoint, payload, {
+        timeout: 3000, // Таймаут в миллисекундах
+      });
       setResponseMessage(`Success: ${response.data}`);
     } catch (error) {
       if (error.response?.status === 409) {

@@ -35,7 +35,7 @@ const AdminPageCars = () => {
   // Загрузка всех машин
   const fetchAllCars = async () => {
     try {
-      const response = await axios.get(`${baseURL}/cars/get_all`);
+      const response = await axios.get(`${baseURL}/cars/get_all`, { timeout: 5000 });
       setCars(response.data);
       setMessage("Список машин успешно загружен.");
     } catch (error) {
@@ -46,7 +46,7 @@ const AdminPageCars = () => {
     // Загрузка данных машины по ID
     const fetchCarById = async (carId) => {
       try {
-        const response = await axios.get(`${baseURL}/cars/get_by_id/${carId}`);
+        const response = await axios.get(`${baseURL}/cars/get_by_id/${carId}`,  { timeout: 5000 });
         setSelectedCar(response.data);
         setMessage(`Машина с ID ${carId} успешно загружена.`);
       } catch (error) {
@@ -70,7 +70,7 @@ const AdminPageCars = () => {
         headers: {
           "Content-Type": "application/json"
         }
-      });
+      },  { timeout: 5000 });
       setMessage("Машина успешно добавлена.");
       fetchAllCars(); // Обновить список машин
     } catch (error) {
@@ -84,8 +84,8 @@ const AdminPageCars = () => {
       await axios.put(`${baseURL}/cars/update/${carId}`, updatedCar, {
         headers: {
           "Content-Type": "application/json"
-        }
-      });
+        }, 
+      },  { timeout: 5000 });
       setMessage(`Машина с ID ${carId} успешно обновлена.`);
       fetchAllCars(); // Обновить список машин
     } catch (error) {
@@ -96,7 +96,7 @@ const AdminPageCars = () => {
   // Удаление машины
   const deleteCar = async (carId) => {
     try {
-      await axios.delete(`${baseURL}/cars/delete/${carId}`);
+      await axios.delete(`${baseURL}/cars/delete/${carId}`, { timeout: 5000 });
       setMessage(`Машина с ID ${carId} успешно удалена.`);
       fetchAllCars(); // Обновить список машин
     } catch (error) {
